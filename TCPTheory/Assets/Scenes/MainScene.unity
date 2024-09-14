@@ -425,7 +425,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Byte
+  m_Text: KB
 --- !u!222 &374900896
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1265,7 +1265,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -561.8, y: -356.6}
+  m_AnchoredPosition: {x: -195.5, y: -176}
   m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1227420198
@@ -1477,7 +1477,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 113.5, y: 90}
+  m_AnchoredPosition: {x: 113.5, y: 89.7}
   m_SizeDelta: {x: 150, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1380309536
@@ -1652,7 +1652,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 270.5, y: 90}
+  m_AnchoredPosition: {x: 270.5, y: 89.7}
   m_SizeDelta: {x: 60, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1622553335
@@ -1719,7 +1719,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 85327579}
         m_TargetAssemblyTypeName: ClientScript1, Assembly-CSharp
-        m_MethodName: InputSizeEnd
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1728,7 +1728,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -1930,7 +1930,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 359, y: 90}
+  m_AnchoredPosition: {x: 359, y: 89.7}
   m_SizeDelta: {x: 60, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1709120574
@@ -1979,7 +1979,7 @@ MonoBehaviour:
   m_CaptionImage: {fileID: 0}
   m_ItemText: {fileID: 1272117791}
   m_ItemImage: {fileID: 0}
-  m_Value: 0
+  m_Value: 1
   m_Options:
     m_Options:
     - m_Text: Byte
@@ -1997,7 +1997,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 85327579}
         m_TargetAssemblyTypeName: ClientScript1, Assembly-CSharp
-        m_MethodName: DropBntChanged
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2006,7 +2006,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
   m_AlphaFadeSpeed: 0.2
 --- !u!114 &1709120575
 MonoBehaviour:
@@ -2170,7 +2170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -2712,6 +2712,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
+      propertyPath: EmptyPrefab
+      value: 
+      objectReference: {fileID: 7141122625583430062, guid: 29c53693a8fda4749a1e3f804b855001, type: 3}
+    - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
+      propertyPath: SlideWinPrefab
+      value: 
+      objectReference: {fileID: 8174077292537709348, guid: 90fc5ef77e8fba94d8ff68ead3ad7710, type: 3}
+    - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: sDataBlockPrefab
       value: 
       objectReference: {fileID: 2322994261586462652, guid: 6289e5102f57d454a8ee5aea5ba47bef, type: 3}
@@ -2745,7 +2753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[1].inSlope
-      value: -0.0000005999981
+      value: -0.00000042924756
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[2].inSlope
@@ -2753,15 +2761,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[0].outSlope
-      value: -0.0018467567
+      value: 0.0044261664
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[1].inWeight
-      value: 0.18774444
+      value: 0.4884742
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[1].outSlope
-      value: -0.0000005999981
+      value: -0.00000042924756
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[2].inWeight
@@ -2773,11 +2781,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[0].outWeight
-      value: 1
+      value: 0.4259056
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[1].outWeight
-      value: 0.19868279
+      value: 0.27771688
       objectReference: {fileID: 0}
     - target: {fileID: 6923565704794323517, guid: 5921bcc020fdda4418cf361bd232d1be, type: 3}
       propertyPath: pdf_forRanddistance.m_Curve.Array.data[0].tangentMode

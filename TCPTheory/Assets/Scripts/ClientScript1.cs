@@ -13,6 +13,8 @@ public class ClientScript1 : MonoBehaviour
     public GameObject sDataBlockPrefab;
     public GameObject dataBlockPrefab;
     public GameObject netNodePrefab;
+    public GameObject EmptyPrefab;
+    public GameObject SlideWinPrefab;
     GameObject sender;
     GameObject receiver;
     List<GameObject> CurrentDataBlocks= new List<GameObject>(); //场景中存在的(正在传输的数据块)
@@ -69,18 +71,21 @@ public class ClientScript1 : MonoBehaviour
         float theNearestdistance__receiver = 1000000.0f;
 
         //随机生成20个网络节点(路由器或交换机),并定位出离sender和reciever最近的节点
-        for (int i = 0; i < 20; i++)
+        if (netNodePrefab)
         {
-            Vector3 randdir = UnityEngine.Random.insideUnitSphere;
-            randdir.y *= 0.1f;
-            float randdis = 30.0f*RandFromCurve(cdf_forRanddistance,UnityEngine.Random.Range(0.0f,1.0f));
-            //float randdis = UnityEngine.Random.Range(1.0f,30.0f);
-            if (netNodePrefab)
+            GameObject NetNodes_Grp = Instantiate(EmptyPrefab);
+            NetNodes_Grp.name = "NetNodes_Grp";
+            for (int i = 0; i < 20; i++)
             {
+                Vector3 randdir = UnityEngine.Random.insideUnitSphere;
+                randdir.y *= 0.1f;
+                float randdis = 30.0f * RandFromCurve(cdf_forRanddistance, UnityEngine.Random.Range(0.0f, 1.0f));
+                //float randdis = UnityEngine.Random.Range(1.0f,30.0f);
                 Vector3 nodepos = randdis * randdir;
                 GameObject t_netnodego = Instantiate(netNodePrefab, nodepos, Quaternion.identity);
                 t_netnodego.name = "NetNode" + string.Format("{0:D2}", i);
                 CurrentNetNodes.Add(t_netnodego);
+                t_netnodego.transform.SetParent(NetNodes_Grp.transform, true);
                 float nearsetsenderdistance = (nodepos - sender.transform.position).magnitude;
                 float nearsetrecieverdistance = (nodepos - receiver.transform.position).magnitude;
                 if (nearsetsenderdistance < theNearestdistance__sender)
@@ -94,12 +99,12 @@ public class ClientScript1 : MonoBehaviour
                     theNearest__receiver = t_netnodego;
                 }
             }
+            CurrentNetNodes.Remove(theNearest__receiver); //移除接收方的网关节点
+            CurrentNetNodes.Remove(theNearest__sender); //移除发送方的网关节点
+            Debug.DrawLine(theNearest__sender.transform.position, sender.transform.position, Color.red, 1000.0f);
+            Debug.DrawLine(theNearest__receiver.transform.position, receiver.transform.position, Color.blue, 1000.0f);
         }
-        CurrentNetNodes.Remove(theNearest__receiver); //移除接收方的网关节点
-        CurrentNetNodes.Remove(theNearest__sender); //移除发送方的网关节点
-        Debug.DrawLine(theNearest__sender.transform.position,sender.transform.position,Color.red,1000.0f);
-        Debug.DrawLine(theNearest__receiver.transform.position,receiver.transform.position,Color.blue,1000.0f);
-
+        else Debug.LogWarning("netNodePrefab is not set!");
         dpdComp = GameObject.Find("DropdownSizeB").GetComponent<Dropdown>();
         textinputsize = GameObject.Find("InputFieldSizeB").GetComponent<TMP_InputField>();
     }
@@ -112,12 +117,11 @@ public class ClientScript1 : MonoBehaviour
         if (c_time > 1.0f)
         {
             c_time = 0.0f;
-            if (dataBlockPrefab)
-            {
-                //Debug.Log("---> dataBlockPrefab ");
-                GameObject t_datablock=Instantiate(dataBlockPrefab) as GameObject;
-                CurrentDataBlocks.Add(t_datablock);
-            }
+            //if (dataBlockPrefab)
+            //{
+            //    GameObject t_datablock=Instantiate(dataBlockPrefab) as GameObject;
+            //    CurrentDataBlocks.Add(t_datablock);
+            //}
         }
     }
 
@@ -126,24 +130,42 @@ public class ClientScript1 : MonoBehaviour
     TMP_InputField textinputsize;
     public void DropBntChanged()
     {
-        Debug.Log("---- <<<------"+ dpdComp.value);
+        //Debug.Log("---- <<<------"+ dpdComp.value);
     }
     public void InputSizeEnd()
     {
         if (textinputsize) Debug.Log("---- data size ------ " + textinputsize.text);
         else Debug.Log("textinputsize empty!");
     }
+    List<GameObject> inslides = new List<GameObject>();
     public void GenerateAndSendClick()
     {
-        UInt64 datasize = (UInt64)(Convert.ToDouble(textinputsize.text) * Math.Pow(1000, dpdComp.value));
-        UInt32 fullpacknum = (UInt32)(datasize / 1000);
-        UInt32 rem = 1;
-        if (datasize % 1000 == 0) rem = 0;
-        UInt32 packnum = fullpacknum + rem;
-        for(int i = 0; i < packnum; ++i){
-            GameObject tdb = Instantiate(sDataBlockPrefab);
-            tdb.transform.position = new Vector3(0.05f * i, 0, 0)+sender.transform.position;
-            tdb.name= "sdatablock" + string.Format("{0:D3}", i);
+        if (textinputsize.text == "") Debug.LogWarning("请输入Data size!");
+        else{
+            UInt64 datasize = (UInt64)(Convert.ToDouble(textinputsize.text) * Math.Pow(1000, dpdComp.value));
+            UInt32 fullpacknum = (UInt32)(datasize / 1000);
+            UInt32 rem = 1;
+            if (datasize % 1000 == 0) rem = 0;
+            UInt32 packnum = fullpacknum + rem;
+            GameObject sDataBlocks_Grp = Instantiate(EmptyPrefab);
+            sDataBlocks_Grp.name = "sDataBlocks_Grp";
+            for (int i = 0; i < packnum; ++i){
+                GameObject tdb = Instantiate(sDataBlockPrefab);
+                tdb.transform.position = new Vector3(0.05f * i, 0, 0);
+                tdb.name = "sdatablock" + string.Format("{0:D4}", i);
+                tdb.transform.SetParent(sDataBlocks_Grp.transform, true);
+            }
+            sDataBlocks_Grp.transform.position += sender.transform.position;
+            //生成滑动窗口(滑动窗口的大小要小于总包数量的二分之一)
+            GameObject slideWind = Instantiate(SlideWinPrefab, sDataBlocks_Grp.transform);
+            Transform[] childTransforms=slideWind.GetComponentsInChildren<Transform>();
+            UInt32 slideWinSize = (packnum / 3);
+            childTransforms[3].position += new Vector3(slideWinSize * 0.05f, 0, 0);  //滑动窗口的长度小于总长度的二分之一
+            childTransforms[2].position = (childTransforms[3].position + childTransforms[1].position) * 0.5f;
+            childTransforms[2].localScale = new Vector3((childTransforms[3].position.x - childTransforms[1].position.x) / 0.05f, 1, 1);
+            slideWind.name = "SlideWindow";
         }
+        
+
     }
 }
