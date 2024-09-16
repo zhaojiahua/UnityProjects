@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+ï»¿using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,28 +17,32 @@ public class ClientScript1 : MonoBehaviour
     public GameObject SlideWinPrefab;
     GameObject sender;
     GameObject receiver;
-    List<GameObject> CurrentDataBlocks= new List<GameObject>(); //³¡¾°ÖĞ´æÔÚµÄ(ÕıÔÚ´«ÊäµÄÊı¾İ¿é)
-    public List<GameObject> CurrentNetNodes= new List<GameObject>(); //³¡¾°ÖĞµÄÍøÂç½Úµã(½ÓÊÕ·½ºÍ·¢ËÍ·½µÄÍø¹Ø½Úµã¶¼Ã»ÓĞËãÔÚÀïÃæ)
+    [System.NonSerialized]
+    public GameObject sDataBlocks_Grp;
+    [System.NonSerialized]
+    public GameObject sDataBlocks_Receiver_Grp;
+    List<GameObject> CurrentDataBlocks= new List<GameObject>(); //åœºæ™¯ä¸­å­˜åœ¨çš„(æ­£åœ¨ä¼ è¾“çš„æ•°æ®å—)
+    public List<GameObject> CurrentNetNodes= new List<GameObject>(); //åœºæ™¯ä¸­çš„ç½‘ç»œèŠ‚ç‚¹(æ¥æ”¶æ–¹å’Œå‘é€æ–¹çš„ç½‘å…³èŠ‚ç‚¹éƒ½æ²¡æœ‰ç®—åœ¨é‡Œé¢)
 
     [System.NonSerialized]
-    public GameObject theNearest__sender = null; //Àësender×î½üµÄÒ»¸öÍøÂç½Úµã(Ïàµ±ÓÚsenderµÄÍø¹Ø)
+    public GameObject theNearest__sender = null; //ç¦»senderæœ€è¿‘çš„ä¸€ä¸ªç½‘ç»œèŠ‚ç‚¹(ç›¸å½“äºsenderçš„ç½‘å…³)
     [System.NonSerialized]
-    public GameObject theNearest__receiver = null; //Àëreceiver×î½üµÄÒ»¸öÍøÂç½Úµã(Ïàµ±ÓÚreceiverµÄÍø¹Ø)
+    public GameObject theNearest__receiver = null; //ç¦»receiveræœ€è¿‘çš„ä¸€ä¸ªç½‘ç»œèŠ‚ç‚¹(ç›¸å½“äºreceiverçš„ç½‘å…³)
 
-    public AnimationCurve pdf_forRanddistance = null;   //¸ÅÂÊ·Ö²¼º¯Êı
+    public AnimationCurve pdf_forRanddistance = null;   //æ¦‚ç‡åˆ†å¸ƒå‡½æ•°
     [System.NonSerialized]
-    public AnimationCurve cdf_forRanddistance = null;   //¸ÅÂÊÀÛ»ı·Ö²¼º¯Êı
-    //×¢ÒâÊäÈëµÄpdfÇúÏßÒ»¶¨ÊÇ0-1Ö®¼äµÄ
+    public AnimationCurve cdf_forRanddistance = null;   //æ¦‚ç‡ç´¯ç§¯åˆ†å¸ƒå‡½æ•°
+    //æ³¨æ„è¾“å…¥çš„pdfæ›²çº¿ä¸€å®šæ˜¯0-1ä¹‹é—´çš„
     AnimationCurve GetCdfFromPdf(AnimationCurve inpdfcrv){
         AnimationCurve cdfcrv = new AnimationCurve();
-        //»ı·ÖËã·¨(·Ö¸îÇóºÍ,ÕâÀï·Ö¸î³É100·İ)
+        //ç§¯åˆ†ç®—æ³•(åˆ†å‰²æ±‚å’Œ,è¿™é‡Œåˆ†å‰²æˆ100ä»½)
         float[] pdfvalues = new float[100];
         float allare = 0.0f;
         for(int i = 0; i < 100; ++i){
             pdfvalues[i] = inpdfcrv.Evaluate(i * 0.01f);
             allare += pdfvalues[i];
         }
-        //²ÉÑù10¸öµã¾Í¿ÉÒÔ´óÖÂ¶¨ĞÍcdfÇúÏß
+        //é‡‡æ ·10ä¸ªç‚¹å°±å¯ä»¥å¤§è‡´å®šå‹cdfæ›²çº¿
         for(int i = 0; i < 10; ++i)
         {
             float tvalue = 0.0f;
@@ -52,8 +56,7 @@ public class ClientScript1 : MonoBehaviour
         cdfcrv.AddKey(1, 1);
         return cdfcrv; 
     }
-    float RandFromCurve(AnimationCurve cdfcrv,float intimev)
-    {
+    float RandFromCurve(AnimationCurve cdfcrv,float intimev){
         return cdfcrv.Evaluate(intimev);
     }
     // Start is called before the first frame update
@@ -61,8 +64,13 @@ public class ClientScript1 : MonoBehaviour
     {
         cdf_forRanddistance = GetCdfFromPdf(pdf_forRanddistance);
 
-        sender =GameObject.FindGameObjectWithTag("Send");
-        receiver = GameObject.FindGameObjectWithTag("Receive");
+        sender =GameObject.Find("Client1");
+        receiver = GameObject.Find("Client2");
+
+        sDataBlocks_Grp = Instantiate(EmptyPrefab);
+        sDataBlocks_Grp.name = "sDataBlocks_Grp";
+        sDataBlocks_Receiver_Grp = Instantiate(EmptyPrefab);
+        sDataBlocks_Receiver_Grp.name = "sDataBlocks_Receiver_Grp";
 
         //Debug.Log("--->>> sender name:"+sender.name);
         //Debug.Log("--->>> receiver name:" + receiver.name);
@@ -70,12 +78,12 @@ public class ClientScript1 : MonoBehaviour
         float theNearestdistance__sender = 1000000.0f;
         float theNearestdistance__receiver = 1000000.0f;
 
-        //Ëæ»úÉú³É20¸öÍøÂç½Úµã(Â·ÓÉÆ÷»ò½»»»»ú),²¢¶¨Î»³öÀësenderºÍreciever×î½üµÄ½Úµã
+        //éšæœºç”Ÿæˆ15ä¸ªç½‘ç»œèŠ‚ç‚¹(è·¯ç”±å™¨æˆ–äº¤æ¢æœº),å¹¶å®šä½å‡ºç¦»senderå’Œrecieveræœ€è¿‘çš„èŠ‚ç‚¹
         if (netNodePrefab)
         {
             GameObject NetNodes_Grp = Instantiate(EmptyPrefab);
             NetNodes_Grp.name = "NetNodes_Grp";
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 15;i++)
             {
                 Vector3 randdir = UnityEngine.Random.insideUnitSphere;
                 randdir.y *= 0.1f;
@@ -99,8 +107,8 @@ public class ClientScript1 : MonoBehaviour
                     theNearest__receiver = t_netnodego;
                 }
             }
-            CurrentNetNodes.Remove(theNearest__receiver); //ÒÆ³ı½ÓÊÕ·½µÄÍø¹Ø½Úµã
-            CurrentNetNodes.Remove(theNearest__sender); //ÒÆ³ı·¢ËÍ·½µÄÍø¹Ø½Úµã
+            CurrentNetNodes.Remove(theNearest__receiver); //ç§»é™¤æ¥æ”¶æ–¹çš„ç½‘å…³èŠ‚ç‚¹
+            CurrentNetNodes.Remove(theNearest__sender); //ç§»é™¤å‘é€æ–¹çš„ç½‘å…³èŠ‚ç‚¹
             Debug.DrawLine(theNearest__sender.transform.position, sender.transform.position, Color.red, 1000.0f);
             Debug.DrawLine(theNearest__receiver.transform.position, receiver.transform.position, Color.blue, 1000.0f);
         }
@@ -110,62 +118,110 @@ public class ClientScript1 : MonoBehaviour
     }
 
     // Update is called once per frame
-    float c_time = 0.0f;
+    //float c_time = 0.0f;
+    List<GameObject> insliderDBs = new List<GameObject>();
+    List<GameObject> inReceiversliderDBs = new List<GameObject>();
     void Update()
     {
-        c_time+= Time.deltaTime;
-        if (c_time > 1.0f)
-        {
-            c_time = 0.0f;
-            //if (dataBlockPrefab)
-            //{
-            //    GameObject t_datablock=Instantiate(dataBlockPrefab) as GameObject;
-            //    CurrentDataBlocks.Add(t_datablock);
-            //}
+        foreach(GameObject DB in insliderDBs){
+            //æ—¶åˆ»æ£€æµ‹æ»‘åŠ¨çª—å£å†…çš„æ•°æ®å—æœ‰æ²¡æœ‰å‘é€å‡ºå»,å¦‚æœæœ‰æœªå‘é€çš„æ•°æ®å—ç«‹åˆ»å‘é€å‡ºå»
+            if (!DB.GetComponent<SDataBlockScript1>().sended) { 
+                SendDataBlock(DB);
+                DB.GetComponent<SDataBlockScript1>().sended=true;
+            }
+            //æ—¶åˆ»æ£€æµ‹æ»‘åŠ¨çª—å£å†…çš„æ•°æ®å—æœ‰æ²¡æœ‰ç¡®è®¤æ”¶åˆ°çš„,å¦‚æœæœ‰ç¡®è®¤æ”¶åˆ°çš„åšä¸Šæ ‡è®°,å¹¶åˆ¤æ–­æ˜¯å¦æ»‘åŠ¨çª—å£
+
         }
     }
+    void SendDataBlock(GameObject indb){
+        GameObject tdb = Instantiate(dataBlockPrefab);
+        tdb.GetComponent<DataBlockScript1>().sender = GameObject.Find("Client1");//æŒ‡å®šå‘é€æ–¹æ˜¯è°
+        tdb.GetComponent<DataBlockScript1>().receiver = GameObject.Find("Client2");//æŒ‡å®šæ¥æ”¶æ–¹æ˜¯è°
+        tdb.GetComponent<DataBlockScript1>().theNearest__sender = theNearest__sender;//æŒ‡å®šå‘é€æ–¹ç½‘å…³
+        tdb.GetComponent<DataBlockScript1>().theNearest__receiver = theNearest__receiver;//æŒ‡å®šæ¥æ”¶æ–¹ç½‘å…³
+        tdb.GetComponent<DataBlockScript1>().metedata = indb.GetComponent<SDataBlockScript1>().index;
+        tdb.name = indb.name + "_send_repetition"+indb.GetComponent<SDataBlockScript1>().repetition;
+        tdb.transform.position = sender.transform.position;
+        Material tdbmat=tdb.GetComponent<MeshRenderer>().material;
+        Color tcolor=tdbmat.color;
+        tdbmat.color =new Color(tcolor.r+0.4f* indb.GetComponent<SDataBlockScript1>().repetition, tcolor.g, tcolor.b,1);
+        indb.GetComponent<MeshRenderer>().material.color = Color.yellow;
+    }
 
-    Dropdown dpdComp;   //ÊäÈëÊı¾İ´óĞ¡µÄµ¥Î»
-    //TextMeshPro textinputsize;  //ÊäÈëÊı¾İ¿éµÄ´óĞ¡
+    Dropdown dpdComp;   //è¾“å…¥æ•°æ®å¤§å°çš„å•ä½
+    //TextMeshPro textinputsize;  //è¾“å…¥æ•°æ®å—çš„å¤§å°
     TMP_InputField textinputsize;
-    public void DropBntChanged()
-    {
-        //Debug.Log("---- <<<------"+ dpdComp.value);
-    }
-    public void InputSizeEnd()
-    {
-        if (textinputsize) Debug.Log("---- data size ------ " + textinputsize.text);
-        else Debug.Log("textinputsize empty!");
-    }
-    List<GameObject> inslides = new List<GameObject>();
-    public void GenerateAndSendClick()
-    {
-        if (textinputsize.text == "") Debug.LogWarning("ÇëÊäÈëData size!");
+
+    [System.NonSerialized]
+    public List<GameObject> inslides = new List<GameObject>();
+    [System.NonSerialized]
+    public List<GameObject> allSDataBlocks = new List<GameObject>();
+    [System.NonSerialized]
+    public List<UInt32> allReceivedSDataBlocks = new List<UInt32>();//æ¥æ”¶æ–¹å·²ç»æ¥æ”¶åˆ°çš„æ‰€æœ‰çš„æ•°æ®å—åºå·
+    UInt32 slideWinSize=0;
+    public void GenerateAndSendClick(){
+        if (textinputsize.text == "") Debug.LogWarning("è¯·è¾“å…¥Data size!");
         else{
             UInt64 datasize = (UInt64)(Convert.ToDouble(textinputsize.text) * Math.Pow(1000, dpdComp.value));
             UInt32 fullpacknum = (UInt32)(datasize / 1000);
             UInt32 rem = 1;
             if (datasize % 1000 == 0) rem = 0;
             UInt32 packnum = fullpacknum + rem;
-            GameObject sDataBlocks_Grp = Instantiate(EmptyPrefab);
-            sDataBlocks_Grp.name = "sDataBlocks_Grp";
+            slideWinSize = (packnum / 3);
+            if (slideWinSize > 6) slideWinSize = 6;
+            if (slideWinSize < 1) slideWinSize = 1;
             for (int i = 0; i < packnum; ++i){
                 GameObject tdb = Instantiate(sDataBlockPrefab);
+                tdb.GetComponent<SDataBlockScript1>().index = (UInt32)i;
                 tdb.transform.position = new Vector3(0.05f * i, 0, 0);
                 tdb.name = "sdatablock" + string.Format("{0:D4}", i);
                 tdb.transform.SetParent(sDataBlocks_Grp.transform, true);
+                allSDataBlocks.Add(tdb);
+                if (i<slideWinSize) insliderDBs.Add(tdb);
             }
             sDataBlocks_Grp.transform.position += sender.transform.position;
-            //Éú³É»¬¶¯´°¿Ú(»¬¶¯´°¿ÚµÄ´óĞ¡ÒªĞ¡ÓÚ×Ü°üÊıÁ¿µÄ¶ş·ÖÖ®Ò»)
-            GameObject slideWind = Instantiate(SlideWinPrefab, sDataBlocks_Grp.transform);
-            Transform[] childTransforms=slideWind.GetComponentsInChildren<Transform>();
-            UInt32 slideWinSize = (packnum / 3);
-            childTransforms[3].position += new Vector3(slideWinSize * 0.05f, 0, 0);  //»¬¶¯´°¿ÚµÄ³¤¶ÈĞ¡ÓÚ×Ü³¤¶ÈµÄ¶ş·ÖÖ®Ò»
-            childTransforms[2].position = (childTransforms[3].position + childTransforms[1].position) * 0.5f;
-            childTransforms[2].localScale = new Vector3((childTransforms[3].position.x - childTransforms[1].position.x) / 0.05f, 1, 1);
-            slideWind.name = "SlideWindow";
+            sDataBlocks_Receiver_Grp.transform.position += receiver.transform.position;
+            //ç”Ÿæˆæ»‘åŠ¨çª—å£(æ»‘åŠ¨çª—å£çš„å¤§å°è¦å°äºæ€»åŒ…æ•°é‡çš„äºŒåˆ†ä¹‹ä¸€)
+            GameObject slideWind = GenerateSlideWind(sender,slideWinSize);
+            //åŒæ—¶åœ¨æ¥æ”¶æ–¹ä¹Ÿç”Ÿæˆç›¸åŒçš„æ»‘åŠ¨çª—å£
+            GameObject slideWind_receiver = GenerateSlideWind(receiver,slideWinSize);
         }
-        
+    }
+    GameObject GenerateSlideWind(GameObject parentgo,UInt32 winsize){
+        GameObject slideWind = Instantiate(SlideWinPrefab, parentgo.transform);
+        Transform[] childTransforms=slideWind.GetComponentsInChildren<Transform>();
+        childTransforms[3].position += new Vector3(winsize * 0.05f, 0, 0);
+        childTransforms[2].position = (childTransforms[3].position + childTransforms[1].position) * 0.5f;
+        childTransforms[2].localScale = new Vector3((childTransforms[3].position.x - childTransforms[1].position.x) / 0.05f, 1, 1);
+        slideWind.name = parentgo.name+"slideWind";
+        return slideWind;
+    }
 
+    public void MoveSenderSDataBlocks(){
+        UInt32 ti=0;
+        while (ti<insliderDBs.Count){
+            if(insliderDBs[(int)ti].GetComponent<SDataBlockScript1>().received){ti++;} 
+            else break;
+        }
+        sDataBlocks_Grp.transform.position += new Vector3(-ti*0.05f,0,0);
+        for(int i=0;i<ti;++i){
+            UInt32 nex_index=insliderDBs[insliderDBs.Count-1].GetComponent<SDataBlockScript1>().index;
+            if(nex_index<(allSDataBlocks.Count-1)) insliderDBs.Add(allSDataBlocks[(int)nex_index+1]);
+            else Debug.Log("------->> å‘é€å®Œæ¯• æ²¡æœ‰æ›´å¤šæ•°æ®äº†!");
+            insliderDBs.RemoveAt(0);
+        }
+    }
+    UInt32 baseStartIndex=0;
+    public void MoveReceiverSDataBlocks(){
+        UInt32 oldbaseStartIndex=baseStartIndex;
+        while (baseStartIndex<allReceivedSDataBlocks.Count){
+            if(allReceivedSDataBlocks[(int)(baseStartIndex)]==baseStartIndex){
+                baseStartIndex++;
+            }
+            else break;
+        }
+        //Debug.Log("oldbaseStartIndex : "+oldbaseStartIndex);
+        //Debug.Log("baseStartIndex : "+baseStartIndex);
+        sDataBlocks_Receiver_Grp.transform.position += new Vector3(-(baseStartIndex-oldbaseStartIndex)*0.05f,0,0);
     }
 }

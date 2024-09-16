@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,13 +6,13 @@ public class NetNodeScript1 : MonoBehaviour
 {
     [System.NonSerialized]
     public float netspeed=0.15f;
-    public AnimationCurve pdf_forNetSpeed = null;   //¸ÅÂÊ·Ö²¼º¯Êı
+    public AnimationCurve pdf_forNetSpeed = null;   //æ¦‚ç‡åˆ†å¸ƒå‡½æ•°
     [System.NonSerialized]
-    public AnimationCurve cdf_forNetSpeed = null;   //¸ÅÂÊÀÛ»ı·Ö²¼º¯Êı
+    public AnimationCurve cdf_forNetSpeed = null;   //æ¦‚ç‡ç´¯ç§¯åˆ†å¸ƒå‡½æ•°
     AnimationCurve GetCdfFromPdf(AnimationCurve inpdfcrv)
     {
         AnimationCurve cdfcrv = new AnimationCurve();
-        //»ı·ÖËã·¨(·Ö¸îÇóºÍ,ÕâÀï·Ö¸î³É100·İ)
+        //ç§¯åˆ†ç®—æ³•(åˆ†å‰²æ±‚å’Œ,è¿™é‡Œåˆ†å‰²æˆ100ä»½)
         float[] pdfvalues = new float[100];
         float allare = 0.0f;
         for (int i = 0; i < 100; ++i)
@@ -20,7 +20,7 @@ public class NetNodeScript1 : MonoBehaviour
             pdfvalues[i] = inpdfcrv.Evaluate(i * 0.01f);
             allare += pdfvalues[i];
         }
-        //²ÉÑù10¸öµã¾Í¿ÉÒÔ´óÖÂ¶¨ĞÍcdfÇúÏß
+        //é‡‡æ ·10ä¸ªç‚¹å°±å¯ä»¥å¤§è‡´å®šå‹cdfæ›²çº¿
         for (int i = 0; i < 10; ++i)
         {
             float tvalue = 0.0f;
@@ -48,7 +48,7 @@ public class NetNodeScript1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ÍøËÙÊ±Ê±¿Ì¿Ì¶¼ÔÚ±ä»¯
+        //ç½‘é€Ÿæ—¶æ—¶åˆ»åˆ»éƒ½åœ¨å˜åŒ–
         netspeed = 0.2f * RandFromCurve(cdf_forNetSpeed, UnityEngine.Random.Range(0.0f, 1.0f)) + 0.04f;
     }
 }
