@@ -44,8 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fb3b08b0a7330842965d49e09742c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataBlockPrefab: {fileID: 5736739904857865829, guid: 6d0f5230572e37e42a1894b4f4b64283, type: 3}
+  sDataBlockPrefab: {fileID: 2322994261586462652, guid: 6289e5102f57d454a8ee5aea5ba47bef, type: 3}
+  dataBlockPrefab: {fileID: 5736739904857865829, guid: 32d6feae05fe679468ce65d403bddcdf, type: 3}
   netNodePrefab: {fileID: 7984313665028549461, guid: 942ac61cd09b5504388de559743093d1, type: 3}
+  EmptyPrefab: {fileID: 7141122625583430062, guid: 29c53693a8fda4749a1e3f804b855001, type: 3}
+  SlideWinPrefab: {fileID: 8174077292537709348, guid: 90fc5ef77e8fba94d8ff68ead3ad7710, type: 3}
   CurrentNetNodes: []
   pdf_forRanddistance:
     serializedVersion: 2
@@ -54,20 +57,20 @@ MonoBehaviour:
       time: 0
       value: 0
       inSlope: 0
-      outSlope: -0.0018467567
+      outSlope: 0.0044261664
       tangentMode: 1
       weightedMode: 2
       inWeight: 0
-      outWeight: 1
+      outWeight: 0.4259056
     - serializedVersion: 3
-      time: 0.5
-      value: 1
-      inSlope: -0.0000005999981
-      outSlope: -0.0000005999981
+      time: 0.35452962
+      value: 0.99622995
+      inSlope: 0.00000025724108
+      outSlope: 0.00000025724108
       tangentMode: 0
       weightedMode: 3
-      inWeight: 0.18774444
-      outWeight: 0.19868279
+      inWeight: 0.65356266
+      outWeight: 0.27771688
     - serializedVersion: 3
       time: 1
       value: 0

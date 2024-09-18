@@ -87,7 +87,7 @@ public class ClientScript1 : MonoBehaviour
             {
                 Vector3 randdir = UnityEngine.Random.insideUnitSphere;
                 randdir.y *= 0.1f;
-                float randdis = 30.0f * RandFromCurve(cdf_forRanddistance, UnityEngine.Random.Range(0.0f, 1.0f));
+                float randdis = 15.0f * RandFromCurve(cdf_forRanddistance, UnityEngine.Random.Range(0.0f, 1.0f));
                 //float randdis = UnityEngine.Random.Range(1.0f,30.0f);
                 Vector3 nodepos = randdis * randdir;
                 GameObject t_netnodego = Instantiate(netNodePrefab, nodepos, Quaternion.identity);
@@ -115,12 +115,14 @@ public class ClientScript1 : MonoBehaviour
         else Debug.LogWarning("netNodePrefab is not set!");
         dpdComp = GameObject.Find("DropdownSizeB").GetComponent<Dropdown>();
         textinputsize = GameObject.Find("InputFieldSizeB").GetComponent<TMP_InputField>();
+        okBtn = GameObject.Find("OKBtn").GetComponent<Button>();
     }
 
     // Update is called once per frame
     //float c_time = 0.0f;
     List<GameObject> insliderDBs = new List<GameObject>();
     List<GameObject> inReceiversliderDBs = new List<GameObject>();
+    Button okBtn;
     void Update()
     {
         foreach(GameObject DB in insliderDBs){
@@ -129,9 +131,9 @@ public class ClientScript1 : MonoBehaviour
                 SendDataBlock(DB);
                 DB.GetComponent<SDataBlockScript1>().sended=true;
             }
-            //时刻检测滑动窗口内的数据块有没有确认收到的,如果有确认收到的做上标记,并判断是否滑动窗口
-
         }
+        if (sendover && receivedover) {okBtn.interactable = true;}
+        else {okBtn.interactable = false;}
     }
     void SendDataBlock(GameObject indb){
         GameObject tdb = Instantiate(dataBlockPrefab);
@@ -158,33 +160,44 @@ public class ClientScript1 : MonoBehaviour
     public List<GameObject> allSDataBlocks = new List<GameObject>();
     [System.NonSerialized]
     public List<UInt32> allReceivedSDataBlocks = new List<UInt32>();//接收方已经接收到的所有的数据块序号
+    [System.NonSerialized]
+    public List<GameObject> allReceivedSDataBlockGOs = new List<GameObject>();//接收方已经接收到的所有的数据块序号
     UInt32 slideWinSize=0;
+    [System.NonSerialized]
+    public UInt32 packnum = 0;
+    GameObject slideWind;
+    GameObject slideWind_receiver;
+    [System.NonSerialized]
+    public bool sendover = true;
+    [System.NonSerialized]
+    public bool receivedover = true;
     public void GenerateAndSendClick(){
         if (textinputsize.text == "") Debug.LogWarning("请输入Data size!");
         else{
+            DeleteAllSendPacks();//生成这波数据之前删除上一波的所有残留数据
+            DeleteAllReceivedPacks();
             UInt64 datasize = (UInt64)(Convert.ToDouble(textinputsize.text) * Math.Pow(1000, dpdComp.value));
             UInt32 fullpacknum = (UInt32)(datasize / 1000);
             UInt32 rem = 1;
             if (datasize % 1000 == 0) rem = 0;
-            UInt32 packnum = fullpacknum + rem;
+            packnum = fullpacknum + rem;
             slideWinSize = (packnum / 3);
-            if (slideWinSize > 6) slideWinSize = 6;
+            if (slideWinSize > 10) slideWinSize = 10; //滑动窗口长度最大是10最小是1
             if (slideWinSize < 1) slideWinSize = 1;
             for (int i = 0; i < packnum; ++i){
                 GameObject tdb = Instantiate(sDataBlockPrefab);
                 tdb.GetComponent<SDataBlockScript1>().index = (UInt32)i;
-                tdb.transform.position = new Vector3(0.05f * i, 0, 0);
                 tdb.name = "sdatablock" + string.Format("{0:D4}", i);
-                tdb.transform.SetParent(sDataBlocks_Grp.transform, true);
+                tdb.transform.SetParent(sDataBlocks_Grp.transform,false);
+                tdb.transform.position += new Vector3(0.05f * i, 0, 0);
+                tdb.GetComponent<MeshRenderer>().material.color = new Color(0.4f, 0.85f, 0.4f, 1.0f);
                 allSDataBlocks.Add(tdb);
                 if (i<slideWinSize) insliderDBs.Add(tdb);
             }
-            sDataBlocks_Grp.transform.position += sender.transform.position;
-            sDataBlocks_Receiver_Grp.transform.position += receiver.transform.position;
             //生成滑动窗口(滑动窗口的大小要小于总包数量的二分之一)
-            GameObject slideWind = GenerateSlideWind(sender,slideWinSize);
+            slideWind = GenerateSlideWind(sender,slideWinSize);
             //同时在接收方也生成相同的滑动窗口
-            GameObject slideWind_receiver = GenerateSlideWind(receiver,slideWinSize);
+            slideWind_receiver = GenerateSlideWind(receiver,slideWinSize);
         }
     }
     GameObject GenerateSlideWind(GameObject parentgo,UInt32 winsize){
@@ -198,18 +211,21 @@ public class ClientScript1 : MonoBehaviour
     }
 
     public void MoveSenderSDataBlocks(){
-        UInt32 ti=0;
-        while (ti<insliderDBs.Count){
-            if(insliderDBs[(int)ti].GetComponent<SDataBlockScript1>().received){ti++;} 
+        UInt32 ti = 0;
+        while (ti < insliderDBs.Count)
+        {
+            if (insliderDBs[(int)ti].GetComponent<SDataBlockScript1>().received) { ti++; }
             else break;
         }
-        sDataBlocks_Grp.transform.position += new Vector3(-ti*0.05f,0,0);
-        for(int i=0;i<ti;++i){
-            UInt32 nex_index=insliderDBs[insliderDBs.Count-1].GetComponent<SDataBlockScript1>().index;
-            if(nex_index<(allSDataBlocks.Count-1)) insliderDBs.Add(allSDataBlocks[(int)nex_index+1]);
+        sDataBlocks_Grp.transform.position += new Vector3(-ti * 0.05f, 0, 0);
+        for (int i = 0; i < ti; ++i)
+        {
+            UInt32 nex_index = insliderDBs[insliderDBs.Count - 1].GetComponent<SDataBlockScript1>().index;
+            if (nex_index < (allSDataBlocks.Count - 1)) insliderDBs.Add(allSDataBlocks[(int)nex_index + 1]);
             else Debug.Log("------->> 发送完毕 没有更多数据了!");
             insliderDBs.RemoveAt(0);
         }
+        
     }
     UInt32 baseStartIndex=0;
     public void MoveReceiverSDataBlocks(){
@@ -222,6 +238,29 @@ public class ClientScript1 : MonoBehaviour
         }
         //Debug.Log("oldbaseStartIndex : "+oldbaseStartIndex);
         //Debug.Log("baseStartIndex : "+baseStartIndex);
-        sDataBlocks_Receiver_Grp.transform.position += new Vector3(-(baseStartIndex-oldbaseStartIndex)*0.05f,0,0);
+        for(uint i = oldbaseStartIndex;i< baseStartIndex; ++i){
+            sDataBlocks_Receiver_Grp.transform.position += new Vector3(-0.05f, 0, 0);
+            allReceivedSDataBlockGOs[(int)i].GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.2f, 0.2f);
+        }
+    }
+    public void DeleteAllSendPacks(){
+        insliderDBs.Clear();
+        inslides.Clear();
+        slideWinSize = 0;
+        packnum = 0;
+        sendover = false;
+        sDataBlocks_Grp.transform.position = sender.transform.position;
+        foreach (GameObject item in allSDataBlocks) Destroy(item);
+        allSDataBlocks.Clear();
+        Destroy(slideWind);
+    }
+    public void DeleteAllReceivedPacks(){
+        baseStartIndex = 0;
+        receivedover = false;
+        allReceivedSDataBlocks.Clear();
+        sDataBlocks_Receiver_Grp.transform.position = receiver.transform.position;
+        foreach (GameObject item in allReceivedSDataBlockGOs) Destroy(item);
+        allReceivedSDataBlockGOs.Clear();
+        Destroy(slideWind_receiver);
     }
 }

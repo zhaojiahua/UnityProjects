@@ -77,7 +77,7 @@ public class DataBlockScript1 : MonoBehaviour
     [System.NonSerialized]
     public UInt32 ACK = 0;
     [System.NonSerialized]
-    public UInt32 metedata = 0;
+    public UInt32 metedata = 0; //数据块的序号
     [System.NonSerialized]
     public UInt32 repetition = 0;   //未收到重复发送
     void ChangeSegment()

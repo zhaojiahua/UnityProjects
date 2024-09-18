@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4932257866173143212}
   m_Layer: 0
   m_Name: ClientPrefab
-  m_TagString: Receive
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,7 +55,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e3a3fd63f069a204391636846bd74b40, type: 2}
+  - {fileID: 2100000, guid: 3c9fc0d024ce8034abb833853bcdc150, type: 2}
+  - {fileID: 2100000, guid: 49b34bb48ce249c42b0859d8db1e3a00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,7 +85,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8048478796408998542}
-  m_Mesh: {fileID: 4970830168463687262, guid: e5f906702b44ab542b25e9cc74e2447b, type: 3}
+  m_Mesh: {fileID: 4562529033911477298, guid: 64ff4dac4fadb824bab2f6492b76796a, type: 3}
 --- !u!114 &-8223445996451387390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,20 +105,20 @@ MonoBehaviour:
       time: 0
       value: 0
       inSlope: 0
-      outSlope: -0.0034790398
+      outSlope: -0.0115514025
       tangentMode: 1
       weightedMode: 2
       inWeight: 0
-      outWeight: 0.5418119
+      outWeight: 0.48954707
     - serializedVersion: 3
       time: 0.5
       value: 1
-      inSlope: 0.009388481
-      outSlope: 0.009388481
+      inSlope: 0.009955282
+      outSlope: 0.009955282
       tangentMode: 0
       weightedMode: 3
-      inWeight: 0.8031359
-      outWeight: 0.06968641
+      inWeight: 0.38675958
+      outWeight: 0.3787048
     - serializedVersion: 3
       time: 1
       value: 0
@@ -142,5 +143,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cb0d58b95ebfa049a757d2194170a54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataBlockPrefab: {fileID: 5736739904857865829, guid: 6d0f5230572e37e42a1894b4f4b64283, type: 3}
+  dataBlockPrefab: {fileID: 5736739904857865829, guid: 32d6feae05fe679468ce65d403bddcdf, type: 3}
   sDataBlockPrefab: {fileID: 2322994261586462652, guid: 6289e5102f57d454a8ee5aea5ba47bef, type: 3}
